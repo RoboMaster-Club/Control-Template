@@ -16,14 +16,14 @@
 extern void IMU_Task(void const *pvParameters);
 
 osThreadId imu_task_handle;
-osThreadId robot_control_task_handle;
+osThreadId robot_command_task_handle;
 osThreadId motor_task_handle;
 osThreadId ui_task_handle;
 osThreadId debug_task_handle;
 osThreadId jetson_orin_task_handle;
 osThreadId daemon_task_handle;
 
-void Robot_Tasks_Robot_Control(void const *argument);
+void Robot_Tasks_Robot_Command(void const *argument);
 void Robot_Tasks_Motor(void const *argument);
 void Robot_Tasks_IMU(void const *argument);
 void Robot_Tasks_UI(void const *argument);
@@ -39,8 +39,8 @@ void Robot_Tasks_Start()
     osThreadDef(motor_task, Robot_Tasks_Motor, osPriorityAboveNormal, 0, 256);
     motor_task_handle = osThreadCreate(osThread(motor_task), NULL);
 
-    osThreadDef(robot_control_task, Robot_Tasks_Robot_Control, osPriorityAboveNormal, 0, 256);
-    robot_control_task_handle = osThreadCreate(osThread(robot_control_task), NULL);
+    osThreadDef(robot_command_task, Robot_Tasks_Robot_Command, osPriorityAboveNormal, 0, 256);
+    robot_command_task_handle = osThreadCreate(osThread(robot_command_task), NULL);
 
     osThreadDef(ui_task, Robot_Tasks_UI, osPriorityAboveNormal, 0, 256);
     ui_task_handle = osThreadCreate(osThread(ui_task), NULL);
@@ -55,14 +55,14 @@ void Robot_Tasks_Start()
     daemon_task_handle = osThreadCreate(osThread(daemon_task), NULL);
 }
 
-void Robot_Tasks_Robot_Control(void const *argument)
+void Robot_Tasks_Robot_Command(void const *argument)
 {
     portTickType xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount();
     const TickType_t TimeIncrement = pdMS_TO_TICKS(2);
     while (1)
     {
-        Robot_Ctrl_Loop();
+        Robot_Command_Loop();
         vTaskDelayUntil(&xLastWakeTime, TimeIncrement);
     }
 }

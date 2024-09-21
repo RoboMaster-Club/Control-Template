@@ -25,20 +25,18 @@ Robot_State_t g_robot_state = {0};
 extern Remote_t g_remote;
 extern Supercap_t g_supercap;
 
-void Robot_Cmd_Loop(void);
-void Handle_Starting_Up_State(void);
-void Handle_Enabled_State(void);
-void Handle_Disabled_State(void);
-
-void Process_Remote_Input(void);
-void Process_Chassis_Control(void);
-void Process_Gimbal_Control(void);
-void Process_Launch_Control(void);
-
 void _toggle_robot_state(uint8_t *state);
 
+/**
+ * @brief This function initializes the robot.
+ * This means setting the state to STARTING_UP,
+ * initializing the buzzer, and calling the
+ * Robot_Task_Start() for the task scheduling
+ */
 void Robot_Init()
 {
+    g_robot_state.state = STARTING_UP;
+
     Buzzer_Init();
     Melody_t system_init_melody = {
         .notes = SYSTEM_INITIALIZING,
@@ -47,6 +45,12 @@ void Robot_Init()
     };
     Buzzer_Play_Melody(system_init_melody); // TODO: Change to non-blocking
 
+    //   Initialize all tasks
+    Robot_Tasks_Start();
+}
+
+void Handle_Starting_Up_State()
+{
     // Initialize all hardware
     Chassis_Task_Init();
     Gimbal_Task_Init();
@@ -55,23 +59,9 @@ void Robot_Init()
     CAN_Service_Init();
     Referee_System_Init(&huart1);
     Supercap_Init(&g_supercap);
-    //   Initialize all tasks
-    Robot_Tasks_Start();
-}
 
-void Robot_Ctrl_Loop()
-{
-    // Control loop for the robot
-    Robot_Cmd_Loop();
-    Referee_Set_Robot_State();
-    Chassis_Ctrl_Loop();
-    Gimbal_Ctrl_Loop();
-    Launch_Ctrl_Loop();
-}
-
-void Handle_Starting_Up_State()
-{
-    // TODO: Add startup logic
+    // Set robot state to disabled
+    g_robot_state.state = DISABLED;
 }
 
 void Handle_Enabled_State()
@@ -84,6 +74,7 @@ void Handle_Enabled_State()
     else
     {
         // Process movement and components in enabled state
+        Referee_Set_Robot_State();
         Process_Remote_Input();
         Process_Chassis_Control();
         Process_Gimbal_Control();
@@ -111,6 +102,7 @@ void Process_Chassis_Control()
 
 void Process_Gimbal_Control()
 {
+    Gimbal_Ctrl_Loop();
 }
 
 void Process_Launch_Control()
@@ -118,23 +110,25 @@ void Process_Launch_Control()
 }
 
 /**
- *  B - Flywheel On Off
- *  G - Spin Top Mode
+ *  This function is called periodically by the Robot Task.
+ *  It serves as the top level state machine for the robot based on the current state.
+ *  Appropriate functions are called.
  */
-void Robot_Cmd_Loop()
+void Robot_Command_Loop()
 {
     switch (g_robot_state.state)
     {
     case STARTING_UP:
         Handle_Starting_Up_State();
         break;
-    case ENABLED:
-        Handle_Enabled_State();
-        break;
     case DISABLED:
         Handle_Disabled_State();
         break;
+    case ENABLED:
+        Handle_Enabled_State();
+        break;
     default:
+        Error_Handler();
         break;
     }
 }

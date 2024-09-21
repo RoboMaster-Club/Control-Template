@@ -7,9 +7,9 @@
 typedef enum Robot_State_e
 {
   // Primary Enable Modes
-  ENABLED,
-  DISABLED,
   STARTING_UP,
+  DISABLED,
+  ENABLED
 } Robot_State_e;
 
 typedef struct
@@ -77,7 +77,14 @@ typedef struct
 } Robot_State_t;
 
 void Robot_Init(void);
-void Robot_Ctrl_Loop(void);
+void Robot_Command_Loop(void);
+void Handle_Starting_Up_State(void);
+void Handle_Enabled_State(void);
+void Handle_Disabled_State(void);
+void Process_Remote_Input(void);
+void Process_Chassis_Control(void);
+void Process_Gimbal_Control(void);
+void Process_Launch_Control(void);
 
 extern Robot_State_t g_robot_state;
 
