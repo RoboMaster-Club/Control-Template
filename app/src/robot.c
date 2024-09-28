@@ -25,8 +25,6 @@ Robot_State_t g_robot_state = {0};
 extern Remote_t g_remote;
 extern Supercap_t g_supercap;
 
-void _toggle_robot_state(uint8_t *state);
-
 /**
  * @brief This function initializes the robot.
  * This means setting the state to STARTING_UP,
@@ -69,7 +67,6 @@ void Handle_Enabled_State()
     if (g_remote.online_flag == REMOTE_OFFLINE || g_remote.controller.right_switch == DOWN)
     {
         g_robot_state.state = DISABLED;
-        g_robot_state.launch.IS_FLYWHEEL_ENABLED = 0;
     }
     else
     {
@@ -90,6 +87,11 @@ void Handle_Disabled_State()
     g_robot_state.chassis.y_speed = 0;
     g_robot_state.gimbal.gimbal_yaw_angle = 0;
     g_robot_state.gimbal.gimbal_pitch_angle = 0;
+
+    if (g_remote.online_flag == REMOTE_ONLINE && g_remote.controller.right_switch != DOWN)
+    {
+        g_robot_state.state = ENABLED;
+    }
 }
 
 void Process_Remote_Input()
@@ -131,9 +133,4 @@ void Robot_Command_Loop()
         Error_Handler();
         break;
     }
-}
-
-void _toggle_robot_state(uint8_t *state)
-{
-    *state ^= 0x01;
 }
