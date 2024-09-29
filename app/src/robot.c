@@ -5,27 +5,15 @@
 #include "gimbal_task.h"
 #include "launch_task.h"
 #include "remote.h"
-#include "bsp_can.h"
 #include "gimbal_task.h"
-#include <math.h>
 #include "imu_task.h"
-#include "user_math.h"
 #include "referee_system.h"
 #include "buzzer.h"
-#include "user_math.h"
 #include "supercap.h"
-
-extern DJI_Motor_Handle_t *g_yaw;
-
-#define KEYBOARD_RAMP_COEF (0.004f)
-#define SPINTOP_COEF (0.003f)
-#define MAX_SPEED (1.0f)
 
 Robot_State_t g_robot_state = {0};
 extern Remote_t g_remote;
 extern Supercap_t g_supercap;
-
-void _toggle_robot_state(uint8_t *state);
 
 /**
  * @brief This function initializes the robot.
@@ -45,10 +33,13 @@ void Robot_Init()
     };
     Buzzer_Play_Melody(system_init_melody); // TODO: Change to non-blocking
 
-    //   Initialize all tasks
+    // Initialize all tasks
     Robot_Tasks_Start();
 }
 
+/**
+ * @brief This function handles the starting up state of the robot, initializing all hardware.
+ */
 void Handle_Starting_Up_State()
 {
     // Initialize all hardware
@@ -64,12 +55,15 @@ void Handle_Starting_Up_State()
     g_robot_state.state = DISABLED;
 }
 
+/**
+ * @brief This function handles the enabled state of the robot.
+ * This means processing remote input, and subsystem control.
+ */
 void Handle_Enabled_State()
 {
     if (g_remote.online_flag == REMOTE_OFFLINE || g_remote.controller.right_switch == DOWN)
     {
         g_robot_state.state = DISABLED;
-        g_robot_state.launch.IS_FLYWHEEL_ENABLED = 0;
     }
     else
     {
@@ -82,14 +76,23 @@ void Handle_Enabled_State()
     }
 }
 
+/**
+ * @brief This function handles the disabled state of the robot.
+ * This means disabling all motors and components
+ */
 void Handle_Disabled_State()
 {
-    // Disable all major components
+    DJI_Motor_Disable_All();
+    //  Disable all major components
     g_robot_state.launch.IS_FLYWHEEL_ENABLED = 0;
     g_robot_state.chassis.x_speed = 0;
     g_robot_state.chassis.y_speed = 0;
-    g_robot_state.gimbal.gimbal_yaw_angle = 0;
-    g_robot_state.gimbal.gimbal_pitch_angle = 0;
+
+    if (g_remote.online_flag == REMOTE_ONLINE && g_remote.controller.right_switch != DOWN)
+    {
+        g_robot_state.state = ENABLED;
+        DJI_Motor_Enable_All();
+    }
 }
 
 void Process_Remote_Input()
@@ -131,9 +134,4 @@ void Robot_Command_Loop()
         Error_Handler();
         break;
     }
-}
-
-void _toggle_robot_state(uint8_t *state)
-{
-    *state ^= 0x01;
 }
