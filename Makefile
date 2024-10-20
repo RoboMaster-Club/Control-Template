@@ -22,7 +22,7 @@ endif
 # building variables
 ######################################
 # debug build?
-DEBUG = 0
+DEBUG = 1
 # Enable CMSIS-DSP?
 CMSIS_DSP = 0
 

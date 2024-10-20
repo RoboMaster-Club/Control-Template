@@ -10,6 +10,7 @@
 #include "referee_system.h"
 #include "buzzer.h"
 #include "supercap.h"
+#include "dji_motor.h"
 
 Robot_State_t g_robot_state = {0};
 extern Remote_t g_remote;
@@ -105,7 +106,6 @@ void Process_Chassis_Control()
 
 void Process_Gimbal_Control()
 {
-    Gimbal_Ctrl_Loop();
 }
 
 void Process_Launch_Control()
