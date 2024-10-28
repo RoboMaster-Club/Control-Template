@@ -21,7 +21,7 @@ git submodule update --init --recursive
 **Package Manager**
 - **Windows**: Install [MSYS2](https://www.msys2.org/).
 - **Mac**: Install [homebrew](https://docs.brew.sh/Installation). 
-- **Linux**: Use the one that comes with your system (eg. ```apt, dnf/yum, pacman```) 
+- **Linux**: Use the one that comes with your system (eg. `apt, dnf/yum, pacman`) 
 
 **Arm GNU Tools and OpenOCD** 
 
@@ -88,3 +88,93 @@ Example config [here](https://github.com/ironic1234/embedded-workflow)
 
 **Debugging**:
 Coming soon
+
+## Usage
+
+### Tasks
+
+VSCode tasks are used to do things like build, clean, or flash the project. Task configurations are located in `tasks.json`
+
+- Open the Command Palette in VSCode using [Ctrl/Cmd+Shift+P].
+- Then, select **Tasks: Run Tasks** and pick the appropriate task.
+
+> You can use the shortcut [Ctrl/Cmd+Shift+B] to run the default build task.
+
+In the terminal:
+
+- clean - delete the build folder: `make clean`
+- build - build the executable: `make`, you can add the -j flag and then the number of cores you have on your cpu to do a multithreaded build
+- flash - flash the executable on to the board: `make download`
+
+### Debugging
+
+A debug session can be used to test and diagnose issues. Debug configurations are located in `launch.json`
+
+- Navigate to **Run and Debug** in VSCode or use [Ctrl/Cmd+Shift+D].
+- Select the appropriate launch configuration, depending on if you are using ST-LINK or CMSIS-DAP debugger.
+- Click on the green play button or press [F5] to start a debug session.
+
+**GDB** 
+Coming soon
+
+### Motor Config Example
+
+```C
+Motor_Config_t yaw_motor_config = {
+        // Comm Config
+        .can_bus = 1, // set can bus currently using
+        .speed_controller_id = 3,
+        .offset = 3690,
+
+        // Motor Reversal Config (if motor is installed in
+        // opposite direction, change to MOTOR_REVERSAL_REVERSED)
+        .motor_reversal = MOTOR_REVERSAL_NORMAL,
+
+        //external sensor config
+        .use_external_feedback = 1,
+        .external_feedback_dir = 1, // 1 if the feedback matches with task space direction, 0 otherwise
+        .external_angle_feedback_ptr = &g_imu.rad.yaw, // assign the pointer to the external angle feedback
+        .external_velocity_feedback_ptr = &(g_imu.bmi088_raw.gyro[2]), // assign the poitner to the external velocity feedback
+
+        // Controller Config
+        .control_mode = POSITION_CONTROL, // Control Mode, see control mode for detail
+        .angle_pid =
+            {
+                .kp = 20000.0f,
+                .kd = 1000000.0f,
+                .output_limit = GM6020_MAX_CURRENT,
+            },
+        .velocity_pid =
+            {
+                .kp = 500.0f,
+                .output_limit = GM6020_MAX_CURRENT,
+            },
+    };
+```
+
+## Common Issues
+
+### 1. Windows fails to initializing CMSIS-DAP debugger.
+
+Solution: Go to device manager and uninstall the usb device (probably having some error message in the list). Unplug and plug in the debugger again.
+
+### 2. Tools (OpenOCD, make tools) not found
+
+```
+Failed to launch OpenOCD GDB Server:...
+```
+
+or
+
+```
+mingw32-make: The term 'mingw32-make' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+```
+
+**Solution 1:**
+Add openocd.exe to system environmental variable. If you followed the installation instruction in this README file, then OpenOCD should be install at default location `C:\msys64\mingw64\bin\openocd.exe`, for windows user. Add `C:\msys64\mingw64\bin` to system executable path.
+
+**Solution 2:**
+If you don't want to mess with the system path, you could also add local openocd path in `.vscode/launch.json`. Add attribute `serverpath` by adding `"serverpath": "C:\\msys64\\mingw64\\bin\\openocd.exe"` in configuration.
+
+> restarting the terminal is likely needed for new environment variables to take effect.
