@@ -15,10 +15,12 @@ git submodule update --init --recursive
 ### Install Tools
 
 **Installed your favorite text editor** 
+
 - **VSCode**: Download VSCode from [here](https://code.visualstudio.com/download).
 - **Neovim**: Install Neovim from [here](https://github.com/neovim/neovim#install-from-package)
 
 **Package Manager**
+
 - **Windows**: Install [MSYS2](https://www.msys2.org/).
 - **Mac**: Install [homebrew](https://docs.brew.sh/Installation). 
 - **Linux**: Use the one that comes with your system (eg. `apt, dnf/yum, pacman`) 
@@ -79,7 +81,6 @@ sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi
 ### Set Up Neovim
 
 **Install Extensions**:
-
 - Use lazy.nvim, mason, lspconfig, luasnip, and nvim-cmp to install clangd 
 - Add conform for formatting
 - Configure with compile_commands.json, .clangd, and .clang-format file 
@@ -87,6 +88,7 @@ sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi
 Example config [here](https://github.com/ironic1234/embedded-workflow)
 
 **Debugging**:
+
 Coming soon
 
 ## Usage
@@ -115,6 +117,7 @@ A debug session can be used to test and diagnose issues. Debug configurations ar
 - Click on the green play button or press [F5] to start a debug session.
 
 **GDB** 
+
 Coming soon
 
 ### Motor Config Example
