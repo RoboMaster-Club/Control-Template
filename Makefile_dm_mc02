@@ -13,7 +13,7 @@
 ######################################
 # target
 ######################################
-TARGET = dm-mc02-board-base
+TARGET = control_template_dm_mc02
 
 BOARD = dm-mc02
 CONTROL_BASE = control-base

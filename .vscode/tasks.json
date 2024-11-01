@@ -30,6 +30,34 @@
             }
         },
         {
+            "label": "build dm-mc02",
+            "type": "shell",
+            "osx": {
+                "command": "make -f Makefile_dm_mc02 -j V=1"
+            },
+            "linux": {
+                "command": "make -f Makefile_dm_mc02 -j V=1"
+            },
+            "windows": {
+                "command": "mingw32-make -f Makefile_dm_mc02 -j V=1"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "fileLocation": "absolute",
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
             "label": "clean",
             "type": "shell",
             "osx": {

@@ -40,6 +40,46 @@
                 "samplesPerSecond": 4
             },
             "preLaunchTask": "build" // build before debug
+        },
+        {
+            "name": "CMSIS-DAP dm-mc02",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}${/}build${/}control_template_dm_mc02.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "svdFile": "STM32H723.svd",
+            "servertype": "openocd", //GDB server
+            "configFiles": [
+                "${workspaceRoot}${/}control-base${/}config${/}openocd_cmsis_dap_H7.cfg" // config
+            ],
+            //"runToEntryPoint": "main", // stop at main
+            //"showDevDebugOutput": "raw", // enable debug output
+            "rtos": "FreeRTOS",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "preLaunchTask": "build dm-mc02" // build before debug
+        },
+        {
+            "name": "ST-LINK dm-mc02",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}${/}build${/}control_template_dm_mc02.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "svdFile": "STM32H723.svd",
+            "servertype": "openocd", //GDB server
+            "configFiles": [
+                "${workspaceRoot}${/}control-base${/}config${/}openocd_stlink_H7.cfg" // config
+            ],
+            //"runToEntryPoint": "main", // stop at main
+            //"showDevDebugOutput": "raw", // enable debug output
+            "rtos": "FreeRTOS",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "preLaunchTask": "build dm-mc02" // build before debug
         }
     ]
 }
