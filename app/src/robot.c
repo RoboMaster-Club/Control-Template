@@ -17,9 +17,11 @@ extern Supercap_t g_supercap;
 #ifdef STM32H723xx
 #define BUZZER_TIMER_NUM (htim12)
 #define BUZZER_TIMER_CHANNEL (TIM_CHANNEL_2)
+#define REMOTE_UART (huart5)
 #else
 #define BUZZER_TIMER_NUM (htim4)
 #define BUZZER_TIMER_CHANNEL (TIM_CHANNEL_3)
+#define REMOTE_UART (huart3)
 #endif
 
 /**
@@ -53,9 +55,9 @@ void Handle_Starting_Up_State()
     Chassis_Task_Init();
     Gimbal_Task_Init();
     Launch_Task_Init();
-    Remote_Init(&huart3);
+    // Remote_Init(&REMOTE_UART);
     CAN_Service_Init();
-    Referee_System_Init(&huart1);
+    // Referee_System_Init(&huart1);
     Supercap_Init(&g_supercap);
 
     // Set robot state to disabled
