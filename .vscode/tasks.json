@@ -61,13 +61,13 @@
             "label": "clean",
             "type": "shell",
             "osx": {
-                "command": "git submodule update; make clean_unix"
+                "command": "make clean_unix"
             },
             "linux": {
-                "command": "git submodule update; make clean_unix"
+                "command": "make clean_unix"
             },
             "windows": {
-                "command": "git submodule update; mingw32-make clean"
+                "command": "mingw32-make clean"
             },
             "problemMatcher": []
         },

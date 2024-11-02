@@ -55,7 +55,7 @@ void Handle_Starting_Up_State()
     Chassis_Task_Init();
     Gimbal_Task_Init();
     Launch_Task_Init();
-    // Remote_Init(&REMOTE_UART);
+    Remote_Init(&REMOTE_UART);
     CAN_Service_Init();
     // Referee_System_Init(&huart1);
     Supercap_Init(&g_supercap);
