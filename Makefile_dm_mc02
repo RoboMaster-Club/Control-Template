@@ -148,7 +148,6 @@ $(CONTROL_BASE)/devices/src/dji_motor.c \
 $(CONTROL_BASE)/devices/src/dm_motor.c \
 $(CONTROL_BASE)/devices/src/mf_motor.c \
 $(CONTROL_BASE)/devices/src/remote.c \
-$(CONTROL_BASE)/devices/src/imu_task.c \
 $(CONTROL_BASE)/devices/src/referee_system.c \
 $(CONTROL_BASE)/devices/src/jetson_orin.c \
 $(CONTROL_BASE)/devices/src/supercap.c \
@@ -157,6 +156,7 @@ app/src/chassis_task.c \
 app/src/gimbal_task.c \
 app/src/launch_task.c \
 app/src/debug_task.c \
+app/src/imu_task.c \
 app/src/robot.c
 # ASM sources
 ASM_SOURCES =  \
