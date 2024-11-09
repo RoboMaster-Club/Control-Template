@@ -98,18 +98,22 @@ void Handle_Disabled_State()
 
 void Process_Remote_Input()
 {
+    // USER CODE HERE
 }
 
 void Process_Chassis_Control()
 {
+     // USER CODE HERE
 }
 
 void Process_Gimbal_Control()
 {
+     // USER CODE HERE
 }
 
 void Process_Launch_Control()
 {
+     // USER CODE HERE
 }
 
 /**
