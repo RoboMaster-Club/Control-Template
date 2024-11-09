@@ -23,9 +23,15 @@ endif
 ######################################
 # debug build?
 DEBUG = 1
-# optimization
-OPT = -Og
+# Enable CMSIS-DSP?
+CMSIS_DSP = 0
 
+# optimization
+ifeq ($(DEBUG), 1)
+	OPT = -Og
+else
+	OPT = -O3
+endif
 
 #######################################
 # paths
@@ -81,6 +87,14 @@ $(BOARD_BASE)/Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 $(BOARD_BASE)/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c \
 $(BOARD_BASE)/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 $(BOARD_BASE)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
+$(wildcard $(CONTROL_BASE)/algo/src/*.c) \
+$(wildcard $(CONTROL_BASE)/bsp/src/*.c) \
+$(wildcard $(CONTROL_BASE)/devices/src/*.c) \
+$(wildcard app/src/*.c) \
+$(wildcard ui/src/*.c)
+
+
+CMSIS_DSP_SOURCES = \
 $(CONTROL_BASE)/CMSIS-DSP/Source/BasicMathFunctions/BasicMathFunctions.c \
 $(CONTROL_BASE)/CMSIS-DSP/Source/QuaternionMathFunctions/QuaternionMathFunctions.c \
 $(CONTROL_BASE)/CMSIS-DSP/Source/BayesFunctions/BayesFunctions.c \
@@ -108,12 +122,7 @@ $(CONTROL_BASE)/CMSIS-DSP/Source/SupportFunctions/SupportFunctionsF16.c \
 $(CONTROL_BASE)/CMSIS-DSP/Source/FastMathFunctions/FastMathFunctionsF16.c \
 $(CONTROL_BASE)/CMSIS-DSP/Source/DistanceFunctions/DistanceFunctionsF16.c \
 $(CONTROL_BASE)/CMSIS-DSP/Source/BayesFunctions/BayesFunctionsF16.c \
-$(CONTROL_BASE)/CMSIS-DSP/Source/SVMFunctions/SVMFunctionsF16.c \
-$(wildcard $(CONTROL_BASE)/algo/src/*.c) \
-$(wildcard $(CONTROL_BASE)/bsp/src/*.c) \
-$(wildcard $(CONTROL_BASE)/devices/src/*.c) \
-$(wildcard app/src/*.c) \
-$(wildcard ui/src/*.c)
+$(CONTROL_BASE)/CMSIS-DSP/Source/SVMFunctions/SVMFunctionsF16.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -178,13 +187,18 @@ C_INCLUDES =  \
 -I$(BOARD_BASE)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 -I$(BOARD_BASE)/Drivers/CMSIS/Device/ST/STM32F4xx/Include \
 -I$(BOARD_BASE)/Drivers/CMSIS/Include \
--I$(CONTROL_BASE)/CMSIS-DSP/Include \
--I$(CONTROL_BASE)/CMSIS-DSP/PrivateInclude \
 -I$(CONTROL_BASE)/algo/inc \
 -I$(CONTROL_BASE)/devices/inc \
 -I$(CONTROL_BASE)/bsp/inc \
 -Iapp/inc \
 -Iui/inc 
+
+ifeq ($(CMSIS_DSP), 1)
+	C_SOURCES += $(CMSIS_DSP_SOURCES)
+	C_INCLUDES += \
+	-I$(CONTROL_BASE)/CMSIS-DSP/Include \
+	-I$(CONTROL_BASE)/CMSIS-DSP/PrivateInclude
+endif
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -fdata-sections -ffunction-sections
@@ -290,7 +304,6 @@ download:
 
 test_download:
 	openocd -d4 -f config/openocd_cmsis_dap.cfg -c init -c halt -c "program $(BUILD_DIR)/$(TARGET).bin 0x08000000 verify reset" -c "reset run" -c shutdown
-
 
 print_sources:
 	@echo "C sources:" $(C_SOURCES)
