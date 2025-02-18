@@ -32,7 +32,7 @@ OPT = -Og
 # paths
 #######################################
 # Build path
-BUILD_DIR = build
+BUILD_DIR = build_dm_mc_02
 
 ######################################
 # source
